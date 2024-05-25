@@ -1,4 +1,3 @@
-
 fn main() {
     let part1_input = advent_of_code::read_input_string("day1.input");
     let part1_val = part1(part1_input);
