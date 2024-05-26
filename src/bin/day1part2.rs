@@ -8,52 +8,82 @@ fn main() {
 fn total_number(input: String) {
     let lines = input.lines();
     for line in lines {
-        line_number(line)
+        line_number(line);
     }
 }
 
-fn line_number(line: &str) {
-    create_char_linker();
+fn line_number(line: &str) -> char {
+    let numb_map = create_numb_map();
+    let char_map = create_char_map();
     let chars = line.chars();
     println!("{line}");
     let mut char_digit: Option<char> = None;
+    let mut possible_numbs: Option<&Vec<i32>> = None;
+    let mut current_index = 0;
     for char in chars {
+        // if let Some(numb) = possible_numbs {
+        //     if numb
+        // }
         let is_digit = char.is_ascii_digit();
         if is_digit {
             char_digit = Some(char);
             break;
         }
+        let possible = char_map.get(&char);
+        if let Some(numbs) = possible {
+            possible_numbs = Some(numbs);
+            current_index += 1;
+            break;
+        }
     }
-    let char_digit = char_digit.unwrap();
-    println!("{char_digit}");
-    panic!("so")
+    char_digit.unwrap()
 }
 
-// fn check_first_letter(char: char) {
-//     let first_entry = NUMBERSTRING[0].bytes();
-//     // let first_char = first_entry[0];
-//     // if char == first_char {
-//     //     println!("hm")
-//     // }
-// }
-
-fn create_char_linker() {
-    let mut number_char_map: HashMap<i32, &str> = HashMap::new();
-    number_char_map.insert(1, "one");
-    number_char_map.insert(2, "two");
-    number_char_map.insert(3, "three");
-    number_char_map.insert(4, "four");
-    number_char_map.insert(5, "five");
-    number_char_map.insert(6, "six");
-    number_char_map.insert(7, "seven");
-    number_char_map.insert(8, "eight");
-    number_char_map.insert(9, "nine");
-
-    let mut char_map: HashMap<char, Vec<i32>> = HashMap::new();
-    for (key, value) in &number_char_map {
-        let char = value.chars().next().unwrap();
-        let char_vec = char_map.entry(char).or_default();
-        char_vec.push(*key)
+fn get_char(numbs: Vec<i32>, index: i32, number_map: &HashMap<i32, String>) -> Vec<char> {
+    let mut possible_chars: Vec<char> = vec![];
+    for numb in numbs {
+        let numb_string = number_map.get(&numb).unwrap();
+        let char = numb_string.chars().nth(index.try_into().unwrap()).unwrap();
+        possible_chars.push(char)
     }
-    panic!("so")
+    possible_chars
+}
+
+fn create_numb_map() -> HashMap<i32, String> {
+    let mut number_char_map: HashMap<i32, String> = HashMap::new();
+    number_char_map.insert(1, "one".to_string());
+    number_char_map.insert(2, "two".to_string());
+    number_char_map.insert(3, "three".to_string());
+    number_char_map.insert(4, "four".to_string());
+    number_char_map.insert(5, "five".to_string());
+    number_char_map.insert(6, "six".to_string());
+    number_char_map.insert(7, "seven".to_string());
+    number_char_map.insert(8, "eight".to_string());
+    number_char_map.insert(9, "nine".to_string());
+    number_char_map
+}
+
+fn create_char_map() -> HashMap<char, Vec<i32>> {
+    let mut char_map: HashMap<char, Vec<i32>> = HashMap::new();
+    char_map.insert('s', vec![7, 6]);
+    char_map.insert('n', vec![9]);
+    char_map.insert('f', vec![5, 4]);
+    char_map.insert('o', vec![1]);
+    char_map.insert('t', vec![2, 3]);
+    char_map.insert('e', vec![8]);
+    char_map
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_char() {
+        let numb_map = create_numb_map();
+        let chars = get_char(vec![2, 3], 2, &numb_map);
+        assert_eq!(chars, vec!['o', 'r']);
+        let chars = get_char(vec![4, 5], 3, &numb_map);
+        assert_eq!(chars, vec!['r', 'e']);
+    }
 }
