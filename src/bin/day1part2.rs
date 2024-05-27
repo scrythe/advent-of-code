@@ -21,9 +21,13 @@ fn line_number(line: &str) -> char {
     let mut possible_numbs: Option<&Vec<i32>> = None;
     let mut current_index = 0;
     for char in chars {
-        // if let Some(numb) = possible_numbs {
-        //     if numb
-        // }
+        if let Some(numbs) = possible_numbs {
+            let possible_chars = get_chars(numbs, current_index, &numb_map);
+            if possible_chars.contains(&char) {
+                current_index += 1;
+                return char;
+            }
+        }
         let is_digit = char.is_ascii_digit();
         if is_digit {
             char_digit = Some(char);
@@ -33,16 +37,18 @@ fn line_number(line: &str) -> char {
         if let Some(numbs) = possible {
             possible_numbs = Some(numbs);
             current_index += 1;
-            break;
+        } else {
+            current_index = 0;
+            possible_numbs = None;
         }
     }
     char_digit.unwrap()
 }
 
-fn get_char(numbs: Vec<i32>, index: i32, number_map: &HashMap<i32, String>) -> Vec<char> {
+fn get_chars(numbs: &Vec<i32>, index: i32, number_map: &HashMap<i32, String>) -> Vec<char> {
     let mut possible_chars: Vec<char> = vec![];
     for numb in numbs {
-        let numb_string = number_map.get(&numb).unwrap();
+        let numb_string = number_map.get(numb).unwrap();
         let char = numb_string.chars().nth(index.try_into().unwrap()).unwrap();
         possible_chars.push(char)
     }
@@ -81,9 +87,17 @@ mod tests {
     #[test]
     fn test_char() {
         let numb_map = create_numb_map();
-        let chars = get_char(vec![2, 3], 2, &numb_map);
+        let chars = get_chars(&vec![2, 3], 2, &numb_map);
         assert_eq!(chars, vec!['o', 'r']);
-        let chars = get_char(vec![4, 5], 3, &numb_map);
+        let chars = get_chars(&vec![4, 5], 3, &numb_map);
         assert_eq!(chars, vec!['r', 'e']);
+    }
+
+    #[test]
+    fn test_next_char() {
+        // let char = line_number("hmons");
+        // assert_eq!(char, 'n');
+        let char = line_number("sadfib");
+        assert_eq!(char, 'i');
     }
 }
